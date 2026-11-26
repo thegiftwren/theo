@@ -1,0 +1,45 @@
+name: Theo autopilot
+
+on:
+  schedule:
+    - cron: "0 16 * * *"   # every day at 16:00 UTC = 10 AM Central (11 AM in summer)
+  workflow_dispatch:         # the "Run workflow" button, for tests
+    inputs:
+      mode:
+        description: "draft = test, saves Buffer drafts and nothing goes live. queue = real post."
+        type: choice
+        default: draft
+        options: [draft, queue]
+
+permissions:
+  contents: write            # to save today's video on the "media" branch (served by GitHub Pages)
+
+concurrency:
+  group: theo-autopilot     # never two runs at once
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Claude Code and video tools
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
+      - name: Make and post today's video
+        run: |
+          # keys pasted from a narrow terminal can contain line breaks: remove them
+          export CLAUDE_CODE_OAUTH_TOKEN="$(printf '%s' "$CLAUDE_CODE_OAUTH_TOKEN" | tr -d '[:space:]')"
+          export BUFFER_API_KEY="$(printf '%s' "$BUFFER_API_KEY" | tr -d '[:space:]')"
+          export ELEVENLABS_API_KEY="$(printf '%s' "$ELEVENLABS_API_KEY" | tr -d '[:space:]')"
+          python3 autopilot.py
+        env:
+          MODE: ${{ github.event.inputs.mode || 'queue' }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
