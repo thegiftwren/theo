@@ -8,7 +8,7 @@ in your Buffer queue (an Instagram Reel and a TikTok). If the video step fails, 
 **Your own videos and Gemini photos go first:** add a line to `media.txt` (instructions are inside it).
 
 **Cost: $0.**
-- GitHub gives private repos 2,000 free minutes a month. This uses about 2 a day.
+- GitHub Actions is free for public repos. This uses about 3 minutes a day.
 - Claude runs on your normal Claude plan, so it uses a little of your usage limit.
 - Buffer's free plan is enough.
 - ElevenLabs: about 150–200 characters a day from your paid plan.
@@ -35,5 +35,5 @@ Theo gets one try to fix a blocked caption. If it still fails, that post is skip
 the run failed.
 
 ## Turn it off
-Go to github.com/thegiftwren/theo-autopilot → **Actions** → **Theo autopilot** → **⋯** → **Disable workflow**.
+Go to github.com/thegiftwren/theo → **Actions** → **Theo autopilot** → **⋯** → **Disable workflow**.
 To stop a single post, delete it in Buffer before its time.
