@@ -1,0 +1,8 @@
+# Videos and photos YOU add for Theo. He uses the first unused line each day, then goes back to his own videos.
+# One per line:   product-handle | public https link | optional note for Theo
+# Product handles: under-door-draft-stopper, ice-grips-for-shoes, magnetic-windshield-snow-cover, easy-jar-opener
+# Links: upload to Shopify -> Content -> Files, then copy the link (starts with https://cdn.shopify.com/).
+#   A video (.mp4 or .mov) is posted as it is, with Theo's caption.
+#   A photo (for example one you made in Gemini) becomes the first picture of Theo's video.
+# Example:
+# ice-grips-for-shoes | https://cdn.shopify.com/s/files/.../my-ice-video.mp4 | me walking on an icy driveway
