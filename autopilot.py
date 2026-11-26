@@ -83,9 +83,17 @@ def check_caption(text, prices):
     for pat, why in BANNED:
         if re.search(pat, t):
             return why
-    for amt in re.findall(r"\$\s?(\d+(?:\.\d{1,2})?)", text):
+    shown = {round(float(x), 2) for x in re.findall(r"\$\s?(\d+(?:\.\d{1,2})?)", text)}
+    lists_all = all(round(p, 2) in shown for p in prices)   # "$12.99 / $13.99" is honest too
+    for m in re.finditer(r"\$\s?(\d+(?:\.\d{1,2})?)", text):
+        amt = m.group(1)
         if not any(abs(float(amt) - p) < 0.005 for p in prices):
             return f"says ${amt}, which isn't a real price"
+        before = text[max(0, m.start() - 14):m.start()].lower()
+        if len(prices) > 1 and not lists_all and abs(float(amt) - min(prices)) < 0.005 and not re.search(r"(from|starting at|starts at|/)\s*$", before):
+            return f"says ${amt} without 'from' (this product has more than one price)"
+    if len(prices) > 1 and re.search(r"\b(just|only)\s+(\$|[a-z]+\s+(ninety|eighty|seventy|sixty|fifty|forty|thirty|twenty))", t):
+        return "says 'just/only' a price, but this product has more than one price (say 'from')"
     if not text.strip():
         return "is empty"
     if len(text) > 2000:
@@ -132,6 +140,7 @@ TODAY'S ANGLE: {angle}
 Rules:
 - Problem first, fix second. Sound like a real person, not an ad. Short lines.
 - Only say things that are true from the info above. You may mention the price, written exactly as above.
+- If there is more than one price, always say "from" before the lowest one (for example "from $12.99", or in the voiceover "from twelve ninety-nine"). Never say "just" or "only" with a price.
 - Never mention shipping speed, delivery dates, days, Christmas delivery, free shipping, sales, discounts, codes or guarantees.
 - No links or URLs. Instagram may say "link in bio". Captions end with 3 to 6 hashtags.
 - "voiceover": what is said out loud, 18 to 30 words, natural and upbeat. Say prices in words ("fourteen ninety nine").
