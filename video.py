@@ -87,7 +87,7 @@ def shot(img, idx, frames, out, square):
     y = "(ih-ih/zoom)/2"
     if square:
         sz = 900
-        fg = (f"[0:v]scale=2000:2000:force_original_aspect_ratio=decrease,pad=2000:2000:(ow-iw)/2:(oh-ih)/2:color=white,"
+        fg = (f"[0:v]scale=1400:1400:force_original_aspect_ratio=decrease,pad=1400:1400:(ow-iw)/2:(oh-ih)/2:color=white,"
               f"zoompan=z='{z}':x='{x}':y='{y}':d={d}:s={sz}x{sz}:fps={FPS}[fg]")
         bg = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},gblur=sigma=28,eq=brightness=-0.18,"
               f"zoompan=z='1.05+0.05*on/{d}':d={d}:s={W}x{H}:fps={FPS}[bg]")
@@ -96,10 +96,10 @@ def shot(img, idx, frames, out, square):
         oy = {"slide_up": f"(H-h)/2+100+H*{k}"}.get(move, "(H-h)/2+100")
         fc = f"{fg};{bg};[bg][fg]overlay=x='{ox}':y='{oy}':eval=frame,format=yuv420p"
     else:
-        fc = (f"[0:v]scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
+        fc = (f"[0:v]scale=1620:2880:force_original_aspect_ratio=increase,crop=1620:2880,"
               f"zoompan=z='{z}':x='{x}':y='{y}':d={d}:s={W}x{H}:fps={FPS},eq=saturation=1.1,format=yuv420p")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-i", str(img), "-filter_complex", fc,
-                    "-frames:v", str(d), "-r", str(FPS), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", str(out)],
+                    "-frames:v", str(d), "-r", str(FPS), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-threads", "2", str(out)],
                    check=True)
 
 
