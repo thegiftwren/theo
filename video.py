@@ -192,9 +192,9 @@ def make_video(images, lines, voice_text, out_path, scene_count=0):
         for li, line in enumerate(wrap(lines[0].upper(), 12).split("\n")):
             hf = tmp / f"hook{li}.txt"
             hf.write_text(line)
-            draws.append(f"drawtext=fontfile='{fb}':textfile='{hf}':fontsize='if(lt(t,0.12),70+t*600,140)':"
+            draws.append(f"drawtext=fontfile='{fb}':textfile='{hf}':fontsize=140:"
                          f"fontcolor={'white' if li % 2 == 0 else ACCENT}:borderw=8:bordercolor=black:"
-                         f"x='(w-text_w)/2+sin(t*55)*9*lt(t,1.2)':y={250 + li * 160}:enable='lt(t,{hook_end:.2f})'")
+                         f"x='(w-text_w)/2+sin(t*55)*9*lt(t,1.2)':y='{250 + li * 160}-max(0,0.12-t)*900':enable='lt(t,{hook_end:.2f})'")
         # word-by-word captions; every third group in the accent color
         end_s = max(total - 1.6, 0)
         gs = groups(words)
@@ -209,15 +209,15 @@ def make_video(images, lines, voice_text, out_path, scene_count=0):
             color = ACCENT if gi % 3 == 1 else "white"
             tf = tmp / f"w{gi}.txt"
             tf.write_text(txt)
-            draws.append(f"drawtext=fontfile='{fb}':textfile='{tf}':fontsize='if(lt(t-{s:.2f},0.08),95+(t-{s:.2f})*560,140)':"
-                         f"fontcolor={color}:borderw=9:bordercolor=black:x=(w-text_w)/2:y=400:"
+            draws.append(f"drawtext=fontfile='{fb}':textfile='{tf}':fontsize=140:"
+                         f"fontcolor={color}:borderw=9:bordercolor=black:x=(w-text_w)/2:y='400+max(0,{s:.2f}+0.08-t)*700':"
                          f"enable='between(t,{s:.2f},{e:.2f})'")
         # end card: price + call to action in the last 1.6 s (above the product)
         cta_file = tmp / "cta.txt"
         cta_file.write_text(wrap((lines[2] or "LINK IN BIO").upper(), 14))
         draws.append(f"drawbox=x=0:y=280:w=iw:h=300:color=black@0.55:t=fill:enable='gte(t,{end_s:.2f})'")
-        draws.append(f"drawtext=fontfile='{fb}':textfile='{cta_file}':fontsize='if(lt(t-{end_s:.2f},0.1),90+(t-{end_s:.2f})*500,140)':"
-                     f"fontcolor={ACCENT}:borderw=6:bordercolor=black:x=(w-text_w)/2:y=305:enable='gte(t,{end_s:.2f})'")
+        draws.append(f"drawtext=fontfile='{fb}':textfile='{cta_file}':fontsize=140:"
+                     f"fontcolor={ACCENT}:borderw=6:bordercolor=black:x=(w-text_w)/2:y='305-max(0,{end_s:.2f}+0.1-t)*900':enable='gte(t,{end_s:.2f})'")
         draws.append(f"drawtext=fontfile='{fi}':text='link in bio':fontsize=86:fontcolor=white:x=(w-text_w)/2:y=470:"
                      f"enable='gte(t,{end_s:.2f})'")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(base), "-i", str(audio), "-vf", ",".join(draws),
