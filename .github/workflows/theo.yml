@@ -29,7 +29,11 @@ jobs:
       - name: Install Claude Code and video tools
         run: |
           npm install -g @anthropic-ai/claude-code
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
+          # a recent static ffmpeg (Ubuntu's older one crashes on animated captions)
+          curl -sSfL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o /tmp/ff.tar.xz
+          mkdir -p /tmp/ff && tar -xJf /tmp/ff.tar.xz -C /tmp/ff --strip-components=1
+          sudo cp /tmp/ff/ffmpeg /tmp/ff/ffprobe /usr/local/bin/
+          ffmpeg -version | head -1
       - name: Make and post today's video
         run: |
           # keys pasted from a narrow terminal can contain line breaks: remove them
