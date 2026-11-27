@@ -144,7 +144,8 @@ Rules:
 - Never mention shipping speed, delivery dates, days, Christmas delivery, free shipping, sales, discounts, codes or guarantees.
 - No links or URLs. Instagram may say "link in bio". Captions end with 3 to 6 hashtags.
 - "voiceover": what is said out loud, 18 to 30 words, natural and upbeat. Say prices in words ("fourteen ninety nine").
-- "screen": exactly 3 very short on-screen lines (max 6 words each): the problem, the fix, and the price or a call to action.
+- "screen": exactly 3 lines: [a scroll-stopping HOOK of max 5 words (a question or bold claim about the problem), the fix in max 4 words, the price CTA like "FROM $12.99"].
+- The voiceover must sound like an energetic creator talking to a friend, never like an ad reader.
 Reply with ONLY JSON: {{"instagram": "caption", "tiktok": "caption", "tiktok_title": "max 80 characters",
  "voiceover": "...", "screen": ["...", "...", "..."]}}"""
     out = ask_claude(prompt)
